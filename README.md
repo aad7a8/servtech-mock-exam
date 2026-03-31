@@ -47,6 +47,11 @@ npm install
 npm start
 ```
 
+> **Codespaces note:** The React dev server proxies `/api/*` to `localhost:8000` automatically via the `"proxy"` setting in `package.json`. Both ports (3000 and 8000) will be forwarded — no extra configuration needed. If the proxy doesn't work, create `frontend/.env.local` with:
+> ```
+> REACT_APP_API_BASE=https://your-codespace-name-8000.app.github.dev
+> ```
+
 ### Docker Compose
 
 ```bash

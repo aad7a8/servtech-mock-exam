@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:8000';
+// In development, requests to /api/* are proxied to the backend via package.json "proxy".
+// In production or Codespaces, set REACT_APP_API_BASE to the backend URL.
+// When using Codespaces, set it to the forwarded backend URL, e.g.:
+//   REACT_APP_API_BASE=https://obscure-pancake-xxx-8000.app.github.dev
+const API_BASE = process.env.REACT_APP_API_BASE || '';
 
 const api = axios.create({ baseURL: API_BASE });
 
