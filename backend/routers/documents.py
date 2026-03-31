@@ -1,19 +1,48 @@
 from fastapi import APIRouter, HTTPException
+from backend.models import DocumentCreate, DocumentResponse
+from backend.services import document_service
 
 router = APIRouter(prefix='/api/documents', tags=['documents'])
 
-@router.get('')
-def list_documents():
-    return {'success': True, 'data': [], 'message': 'Not implemented yet'}
 
-@router.post('')
-def create_document():
-    return {'success': True, 'data': None, 'message': 'Not implemented yet'}
+@router.post('', status_code=201)
+def create_document(body: DocumentCreate):
+    doc = document_service.create_document(
+        title=body.title,
+        content=body.content,
+        equipment_type=body.equipment_type,
+        tags=body.tags,
+    )
+    return {'success': True, 'data': doc, 'message': 'Document created'}
+
+
+@router.get('')
+def list_documents(equipment_type: str | None = None, tag: str | None = None):
+    docs = document_service.list_documents(equipment_type=equipment_type, tag=tag)
+    return {'success': True, 'data': docs, 'message': ''}
+
 
 @router.get('/{doc_id}')
 def get_document(doc_id: str):
-    raise HTTPException(status_code=404, detail='Not implemented')
+    doc = document_service.get_document(doc_id)
+    if doc is None:
+        return {
+            'success': False,
+            'data': None,
+            'message': 'Document not found',
+            'error_code': 'DOC_NOT_FOUND',
+        }
+    return {'success': True, 'data': doc, 'message': ''}
+
 
 @router.delete('/{doc_id}')
 def delete_document(doc_id: str):
-    return {'success': True, 'data': None, 'message': 'Not implemented yet'}
+    doc = document_service.delete_document(doc_id)
+    if doc is None:
+        return {
+            'success': False,
+            'data': None,
+            'message': 'Document not found',
+            'error_code': 'DOC_NOT_FOUND',
+        }
+    return {'success': True, 'data': doc, 'message': 'Document deleted'}

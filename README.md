@@ -1,81 +1,97 @@
-# servtech-mock-exam
+# ServTech Knowledge Base — Mock Exam
 
-## 專案概述
+## Overview
 
-這是一個 **智慧工廠設備知識庫問答系統** 的範例專案，依據題目建議結構建立最小可運行後端與前端骨架。
+An **Equipment Knowledge Base Q&A System** for smart factories. Engineers can ask questions in natural language and get relevant answers from equipment manuals, SOPs, and maintenance records.
 
-主要目標：
-- 後端：FastAPI + SQLite CRUD API、Query API、CORS
-- 前端：React + MUI + React Router
-- 專案結構：backend/frontend + Docker Compose + CI
+**Tech Stack:** FastAPI + SQLite (backend) | React + Material UI (frontend)
 
-## 專案結構
+## Architecture
 
-- backend/
-  - main.py
-  - config.py
-  - database.py
-  - models.py
-  - routers/
-    - documents.py
-    - query.py
-  - services/
-    - document_service.py
-    - search_service.py
-    - llm_service.py
-  - tests/
-    - test_documents.py
-    - test_query.py
-  - Dockerfile
-- frontend/
-  - package.json
-  - src/
-    - App.jsx
-    - pages/
-      - DocumentsPage.jsx
-      - QueryPage.jsx
-    - services/
-      - api.js
-  - Dockerfile
-- docker-compose.yml
-- .github/workflows/ci.yml
+```
+Frontend (React + MUI)          Backend (FastAPI)
+┌────────────────────┐          ┌──────────────────────────┐
+│ /documents         │  REST    │ POST /api/documents      │
+│   - Table + CRUD   │ ◄─────► │ GET  /api/documents      │
+│   - Filter by type │         │ GET  /api/documents/{id}  │
+│ /query             │         │ DELETE /api/documents/{id}│
+│   - Search input   │ ◄─────► │ POST /api/query           │
+│   - Answer + Srcs  │         │   (keyword search)        │
+└────────────────────┘          └──────────────────────────┘
+                                          │
+                                   SQLite (documents)
+```
 
-## 快速啟動
+## Quick Start
 
-1. 後端
+### Backend
 
 ```bash
-cd /workspaces/servtech-mock-exam
-python -m venv .venv
-source .venv/bin/activate
-pip install fastapi uvicorn pydantic
+pip install -r backend/requirements.txt
+python -m backend.seed           # Load sample data
 uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-2. 前端（假設使用 Create React App 相關環境）
+### Frontend
 
 ```bash
-cd /workspaces/servtech-mock-exam/frontend
+cd frontend
 npm install
 npm start
 ```
 
-3. (可選) Docker Compose
+### Docker Compose
 
 ```bash
-cd /workspaces/servtech-mock-exam
 docker compose up --build
 ```
 
-## 說明
+## API Endpoints
 
-- 後端 API 路由已搭建並回傳統一格式，未完成的部分使用 placeholder。
-- Query API 目前回傳 sample answer，後續可擴增關鍵字匹配/TF-IDF/向量檢索。
-- 已加入 CI workflow 作為加分項目。
+| Method | Route | Description |
+|--------|-------|-------------|
+| POST   | `/api/documents` | Create document (with validation) |
+| GET    | `/api/documents` | List documents (`?equipment_type=CNC&tag=安全`) |
+| GET    | `/api/documents/{id}` | Get single document |
+| DELETE | `/api/documents/{id}` | Delete document |
+| POST   | `/api/query` | Query knowledge base |
 
-## 後續可做
+All responses follow unified format: `{ success, data, message }`
 
-- 完成 CRUD邏輯與資料庫串接
-- 加入文件篩選、分頁、異常處理
-- 完整前端文件管理與查詢介面
-- 加入 LLM API 串接至 query API
+## Search Strategy
+
+Currently using **Plan C (keyword match)** — question is split into keywords, each document is scored by hit count. Architecture supports swapping to TF-IDF, BM25, or embedding-based search via the `SearchService` abstraction.
+
+## Design Decisions
+
+- **SQLite** for simplicity in exam/demo context; easily swappable to PostgreSQL
+- **Tags stored as JSON** in SQLite TEXT column — simpler than a relation table for this scale
+- **Strategy pattern** for search — `search_service.py` can be replaced with TF-IDF/embedding without touching routes
+- **MUI components** used throughout: Table, Dialog, Chip, Autocomplete, Accordion, Snackbar, Select
+- **Unified API response format** with error codes for consistent frontend handling
+
+## Project Structure
+
+```
+backend/
+  main.py, config.py, database.py, models.py
+  routers/   (documents.py, query.py)
+  services/  (document_service.py, search_service.py, llm_service.py)
+  tests/     (test_documents.py, test_query.py)
+  seed.py    (test data loader)
+frontend/
+  src/
+    App.jsx, index.js, theme.js
+    pages/     (DocumentsPage.jsx, QueryPage.jsx)
+    services/  (api.js)
+docker-compose.yml
+.github/workflows/ci.yml
+```
+
+## Tests
+
+```bash
+python -m pytest backend/tests/ -v
+```
+
+11 test cases covering CRUD operations, filtering, query search, and response structure.

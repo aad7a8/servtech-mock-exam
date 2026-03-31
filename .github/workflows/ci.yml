@@ -16,7 +16,6 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install backend deps
-        run: |
-          pip install fastapi uvicorn pydantic pytest
+        run: pip install -r backend/requirements.txt
       - name: Run backend tests
-        run: pytest -q
+        run: python -m pytest backend/tests/ -v
