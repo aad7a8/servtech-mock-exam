@@ -1,7 +1,11 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .database import init_db
+
+try:
+    from .database import init_db
+except ImportError:
+    from database import init_db
 
 
 @asynccontextmanager
@@ -20,7 +24,10 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
-from .routers import documents, query  # noqa: E402
+try:
+    from .routers import documents, query
+except ImportError:
+    from routers import documents, query
 
 app.include_router(documents.router)
 app.include_router(query.router)
