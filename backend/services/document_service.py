@@ -1,7 +1,11 @@
 import json
 import uuid
 from datetime import datetime, timezone
-from backend.database import get_conn, row_to_dict
+
+try:
+    from ..database import get_conn, row_to_dict
+except ImportError:
+    from database import get_conn, row_to_dict
 
 
 def create_document(title: str, content: str, equipment_type: str, tags: list[str]) -> dict:

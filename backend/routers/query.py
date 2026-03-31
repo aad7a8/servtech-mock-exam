@@ -1,7 +1,13 @@
 from fastapi import APIRouter
-from backend.models import QueryRequest
-from backend.services import document_service
-from backend.services.search_service import search_keyword
+
+try:
+    from ..models import QueryRequest
+    from ..services import document_service
+    from ..services.search_service import search_keyword
+except ImportError:
+    from models import QueryRequest
+    from services import document_service
+    from services.search_service import search_keyword
 
 router = APIRouter(prefix='/api/query', tags=['query'])
 

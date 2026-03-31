@@ -27,9 +27,16 @@ Frontend (React + MUI)          Backend (FastAPI)
 ### Backend
 
 ```bash
+# Option A: From project root
 pip install -r backend/requirements.txt
 python -m backend.seed           # Load sample data
 uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+
+# Option B: From backend/ directory (e.g. Codespaces)
+cd backend
+pip install -r requirements.txt
+python seed.py                   # Load sample data
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Frontend
@@ -39,6 +46,11 @@ cd frontend
 npm install
 npm start
 ```
+
+> **Codespaces note:** The React dev server proxies `/api/*` to `localhost:8000` automatically via the `"proxy"` setting in `package.json`. Both ports (3000 and 8000) will be forwarded — no extra configuration needed. If the proxy doesn't work, create `frontend/.env.local` with:
+> ```
+> REACT_APP_API_BASE=https://your-codespace-name-8000.app.github.dev
+> ```
 
 ### Docker Compose
 
