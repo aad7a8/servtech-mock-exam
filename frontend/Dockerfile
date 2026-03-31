@@ -1,7 +1,7 @@
 FROM node:20
 WORKDIR /app
-COPY ./frontend/package.json ./frontend/package-lock.json* ./
+COPY package.json package-lock.json* ./
 RUN npm install
-COPY ./frontend ./
+COPY . .
 EXPOSE 3000
 CMD ["npm", "start"]

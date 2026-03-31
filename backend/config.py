@@ -1,6 +1,4 @@
-from pydantic import BaseSettings
+import os
 
-class Settings(BaseSettings):
-    database_url: str = 'sqlite:///./servtech.db'
-
-settings = Settings()
+DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///./servtech.db')
+LLM_API_KEY = os.getenv('LLM_API_KEY', '')
