@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from backend.models import DocumentCreate, DocumentResponse
-from backend.services import document_service
+from ..models import DocumentCreate, DocumentResponse
+from ..services import document_service
 
 router = APIRouter(prefix='/api/documents', tags=['documents'])
 

@@ -1,7 +1,14 @@
 import pytest
 from fastapi.testclient import TestClient
-from backend.main import app
-from backend.database import get_conn, init_db
+try:
+    from backend.main import app
+    from backend.database import get_conn, init_db
+except ImportError:
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+    from backend.main import app
+    from backend.database import get_conn, init_db
 
 client = TestClient(app)
 

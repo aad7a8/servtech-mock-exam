@@ -1,5 +1,8 @@
 """Seed the database with test documents from the exam spec."""
-from backend.services.document_service import create_document
+try:
+    from backend.services.document_service import create_document
+except ImportError:
+    from services.document_service import create_document
 
 SEED_DATA = [
     {

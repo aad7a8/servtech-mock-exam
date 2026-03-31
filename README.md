@@ -27,6 +27,7 @@ Frontend (React + MUI)          Backend (FastAPI)
 ### Backend
 
 ```bash
+# From project root
 pip install -r backend/requirements.txt
 python -m backend.seed           # Load sample data
 uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
